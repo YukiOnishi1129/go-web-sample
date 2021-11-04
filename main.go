@@ -57,13 +57,19 @@ func index(w http.ResponseWriter, rq *http.Request, tmp *template.Template) {
 
 // hello handler
 func hello(w http.ResponseWriter, rq *http.Request, tmp *template.Template) {
+	
+	// rq.FormValue: getパラメーターを取得
+	id := rq.FormValue("id")
+	nm := rq.FormValue("name")
+	msg := "id: " + id + ", Name: " + nm
+	
 	// templateに渡されるデータを構造体として定義
 	item := struct {
 		Title    string
-		Items  []string
+		Message  string
 	}{
 		Title: "Send values",
-		Items: []string{"One", "Two", "Three"},
+		Message: msg,
 	}
 	// Execute: ファイル出力 (この場合templatesのhtmlを表示)
 	// 第二引数：templatesに渡すデータ
