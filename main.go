@@ -4,9 +4,15 @@ import (
 	"log"
 	"net/http"
 	"text/template"
+
+	"github.com/gorilla/sessions"
 )
 
-var flg bool = true
+// var flg bool = true
+
+// セッションのストアを作成 (セッションの値を保持する構造体)
+// CookieStore: クッキー情報をもとにストアを生成
+var cs *sessions.CookieStore = sessions.NewCookieStore([]byte("secret-key-12345"))
 
 // Temps is template structure
 type Temps struct {
@@ -20,6 +26,12 @@ func notemp() *template.Template {
 	src := "<html><body><h1>NO TEMPLATE.</h1></body></html>"
 	tmp,_ := template.New("index").Parse(src)
 	return tmp
+}
+
+// get target Template.
+func page(frame string) *template.Template {
+	tmps, _ := template.ParseFiles("templates/"+frame+".html")
+	return tmps
 }
 
 // setup template function.
@@ -48,8 +60,19 @@ func setupTemp() *Temps {
 
 // index handler
 func index(w http.ResponseWriter, rq *http.Request, tmp *template.Template) {
+	item := struct {
+		Template string
+		Title    string
+		Message  string
+	} {
+		Template: "index",
+		Title:    "Index",
+		Message:  "This is Top page.",
+	}
+	
 	// Execute: ファイル出力 (この場合templatesのhtmlを表示)
-	er := tmp.Execute(w, nil)
+	// er := tmp.Execute(w, nil)
+	er := page("index").Execute(w, item)
 	if er != nil {
 		log.Fatal(er)
 	}
@@ -57,17 +80,59 @@ func index(w http.ResponseWriter, rq *http.Request, tmp *template.Template) {
 
 // hello handler
 func hello(w http.ResponseWriter, rq *http.Request, tmp *template.Template) {
+	
+	// rq.FormValue: getパラメーターを取得
+	// id := rq.FormValue("id")
+	// nm := rq.FormValue("name")
+	// msg := "id: " + id + ", Name: " + nm
+
+	// msg := "login name and password"
+
+	// sessionを用意
+	// <Store>.get(キー名)
+	// ses, _ := cs.Get(rq, "hello-session")
+
+	// if rq.Method == "POST" {
+	// 	// セッションに値を保管
+	// 	ses.Values["login"] = nil
+	// 	ses.Values["name"] = nil
+	// 	// PostFormValue: postパラメーターを取得
+	// 	nm := rq.PostFormValue("name")
+	// 	pw := rq.PostFormValue("pass")
+	// 	// nameとpasswordが同じならsessionに保持
+	// 	if nm == pw {
+	// 		ses.Values["login"] = true
+	// 		ses.Values["name"] = nm
+	// 	}
+	// 	// セッションの保管
+	// 	ses.Save(rq, w)
+	// }
+
+	
+
+	// flg, _ := ses.Values["login"].(bool)
+	// lname, _ := ses.Values["name"].(string)
+
+	// if flg {
+	// 	msg = "logined: " + lname
+	// }
+
+	data := []string{
+		"One", "Two", "Three",
+	}
+	
 	// templateに渡されるデータを構造体として定義
 	item := struct {
 		Title    string
-		Items  []string
+		Data     []string
 	}{
-		Title: "Send values",
-		Items: []string{"One", "Two", "Three"},
+		Title: "Hello",
+		Data: data,
 	}
 	// Execute: ファイル出力 (この場合templatesのhtmlを表示)
 	// 第二引数：templatesに渡すデータ
-	er := tmp.Execute(w, item)
+	// er := tmp.Execute(w, item)
+	er := page("hello").Execute(w, item)
 	if er != nil {
 		log.Fatal(er)
 	}
@@ -75,11 +140,11 @@ func hello(w http.ResponseWriter, rq *http.Request, tmp *template.Template) {
 
 
 // main program
-func main() {
+func main() {	
 	temps := setupTemp()
 	// index handler
 	http.HandleFunc("/", func(w http.ResponseWriter, rq *http.Request) {
-		hello(w, rq, temps.index)
+		index(w, rq, temps.index)
 	})
 
 	// hello handling
