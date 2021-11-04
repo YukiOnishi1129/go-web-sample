@@ -4,9 +4,15 @@ import (
 	"log"
 	"net/http"
 	"text/template"
+
+	"github.com/gorilla/sessions"
 )
 
-var flg bool = true
+// var flg bool = true
+
+// セッションのストアを作成 (セッションの値を保持する構造体)
+// CookieStore: クッキー情報をもとにストアを生成
+var cs *sessions.CookieStore = sessions.NewCookieStore([]byte("secret-key-12345"))
 
 // Temps is template structure
 type Temps struct {
@@ -63,13 +69,35 @@ func hello(w http.ResponseWriter, rq *http.Request, tmp *template.Template) {
 	// nm := rq.FormValue("name")
 	// msg := "id: " + id + ", Name: " + nm
 
-	msg := "type name and password"
+	msg := "login name and password"
+
+	// sessionを用意
+	// <Store>.get(キー名)
+	ses, _ := cs.Get(rq, "hello-session")
 
 	if rq.Method == "POST" {
+		// セッションに値を保管
+		ses.Values["login"] = nil
+		ses.Values["name"] = nil
 		// PostFormValue: postパラメーターを取得
 		nm := rq.PostFormValue("name")
 		pw := rq.PostFormValue("pass")
-		msg = "name: " + nm + ", password: " + pw
+		// nameとpasswordが同じならsessionに保持
+		if nm == pw {
+			ses.Values["login"] = true
+			ses.Values["name"] = nm
+		}
+		// セッションの保管
+		ses.Save(rq, w)
+	}
+
+	
+
+	flg, _ := ses.Values["login"].(bool)
+	lname, _ := ses.Values["name"].(string)
+
+	if flg {
+		msg = "logined: " + lname
 	}
 	
 	// templateに渡されるデータを構造体として定義
@@ -77,7 +105,7 @@ func hello(w http.ResponseWriter, rq *http.Request, tmp *template.Template) {
 		Title    string
 		Message  string
 	}{
-		Title: "Send values",
+		Title: "Session",
 		Message: msg,
 	}
 	// Execute: ファイル出力 (この場合templatesのhtmlを表示)
