@@ -140,7 +140,7 @@ func hello(w http.ResponseWriter, rq *http.Request, tmp *template.Template) {
 
 
 // main program
-func main() {
+func main() {	
 	temps := setupTemp()
 	// index handler
 	http.HandleFunc("/", func(w http.ResponseWriter, rq *http.Request) {
