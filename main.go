@@ -55,8 +55,17 @@ func index(w http.ResponseWriter, rq *http.Request, tmp *template.Template) {
 
 // hello handler
 func hello(w http.ResponseWriter, rq *http.Request, tmp *template.Template) {
+	// templateに渡されるデータを構造体として定義
+	item := struct {
+		Title   string
+		Message string
+	}{
+		Title: "Send values",
+		Message: "This is Sample message. <br>これはサンプルです。",
+	}
 	// Execute: ファイル出力 (この場合templatesのhtmlを表示)
-	er := tmp.Execute(w, nil)
+	// 第二引数：templatesに渡すデータ
+	er := tmp.Execute(w, item)
 	if er != nil {
 		log.Fatal(er)
 	}
