@@ -59,9 +59,18 @@ func index(w http.ResponseWriter, rq *http.Request, tmp *template.Template) {
 func hello(w http.ResponseWriter, rq *http.Request, tmp *template.Template) {
 	
 	// rq.FormValue: getパラメーターを取得
-	id := rq.FormValue("id")
-	nm := rq.FormValue("name")
-	msg := "id: " + id + ", Name: " + nm
+	// id := rq.FormValue("id")
+	// nm := rq.FormValue("name")
+	// msg := "id: " + id + ", Name: " + nm
+
+	msg := "type name and password"
+
+	if rq.Method == "POST" {
+		// PostFormValue: postパラメーターを取得
+		nm := rq.PostFormValue("name")
+		pw := rq.PostFormValue("pass")
+		msg = "name: " + nm + ", password: " + pw
+	}
 	
 	// templateに渡されるデータを構造体として定義
 	item := struct {
