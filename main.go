@@ -6,6 +6,8 @@ import (
 	"text/template"
 )
 
+var flg bool = true
+
 // Temps is template structure
 type Temps struct {
 	notemp *template.Template
@@ -57,11 +59,15 @@ func index(w http.ResponseWriter, rq *http.Request, tmp *template.Template) {
 func hello(w http.ResponseWriter, rq *http.Request, tmp *template.Template) {
 	// templateに渡されるデータを構造体として定義
 	item := struct {
-		Title   string
-		Message string
+		Flg      bool
+		Title    string
+		Message  string
+		JMessage string
 	}{
+		Flg: flg,
 		Title: "Send values",
 		Message: "This is Sample message. <br>これはサンプルです。",
+		JMessage: "これはサンプルです。",
 	}
 	// Execute: ファイル出力 (この場合templatesのhtmlを表示)
 	// 第二引数：templatesに渡すデータ
