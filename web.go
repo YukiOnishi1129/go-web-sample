@@ -1,6 +1,10 @@
 package main
 
-import "net/http"
+import (
+	"log"
+	"net/http"
+	"text/template"
+)
 
 func main() {
 	/*
@@ -10,17 +14,29 @@ func main() {
 	// http.ListenAndServe("", http.FileServer((http.Dir("."))))
 
 
-	msg := `<html>
+	html := `<html>
 	<body>
 	<h1>Hello</h1>
-	<p>This is Go-server!!</p>
+	<p>This is sample message</p>
 	</body>
 	</html>
 	`
+
+	// テンプレートを使用
+	// template.New().Parse(): Parseに入れる引数はhtmlのソースコード
+	tf, er := template.New("index").Parse(html)
+	if er != nil {
+		log.Fatal(er)
+	}
 	hh := func(w http.ResponseWriter, rq *http.Request) {
 		// w.Write([]byte("Hello, This is Go-server!!"))
 		// htmlも出力できる
-		w.Write([]byte(msg))
+
+		// Execute: templateのメソッド。ソースコードをwebページとして出力
+		er = tf.Execute(w, nil)
+		if er != nil {
+			log.Fatal((er))
+		}
 	}
 
 	/*
