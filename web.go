@@ -9,8 +9,18 @@ func main() {
 	*/
 	// http.ListenAndServe("", http.FileServer((http.Dir("."))))
 
+
+	msg := `<html>
+	<body>
+	<h1>Hello</h1>
+	<p>This is Go-server!!</p>
+	</body>
+	</html>
+	`
 	hh := func(w http.ResponseWriter, rq *http.Request) {
-		w.Write([]byte("Hello, This is Go-server!!"))
+		// w.Write([]byte("Hello, This is Go-server!!"))
+		// htmlも出力できる
+		w.Write([]byte(msg))
 	}
 
 	/*
