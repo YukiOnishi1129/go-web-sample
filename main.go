@@ -59,15 +59,11 @@ func index(w http.ResponseWriter, rq *http.Request, tmp *template.Template) {
 func hello(w http.ResponseWriter, rq *http.Request, tmp *template.Template) {
 	// templateに渡されるデータを構造体として定義
 	item := struct {
-		Flg      bool
 		Title    string
-		Message  string
-		JMessage string
+		Items  []string
 	}{
-		Flg: flg,
 		Title: "Send values",
-		Message: "This is Sample message. <br>これはサンプルです。",
-		JMessage: "これはサンプルです。",
+		Items: []string{"One", "Two", "Three"},
 	}
 	// Execute: ファイル出力 (この場合templatesのhtmlを表示)
 	// 第二引数：templatesに渡すデータ
