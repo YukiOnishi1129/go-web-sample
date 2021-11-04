@@ -14,19 +14,26 @@ func main() {
 	// http.ListenAndServe("", http.FileServer((http.Dir("."))))
 
 
-	html := `<html>
-	<body>
-	<h1>Hello</h1>
-	<p>This is sample message</p>
-	</body>
-	</html>
-	`
+	// html := `<html>
+	// <body>
+	// <h1>Hello</h1>
+	// <p>This is sample message</p>
+	// </body>
+	// </html>
+	// `
 
 	// テンプレートを使用
 	// template.New().Parse(): Parseに入れる引数はhtmlのソースコード
-	tf, er := template.New("index").Parse(html)
+	// tf, er := template.New("index").Parse(html)
+	/*
+	* template.ParseFiles()
+	* ファイルパスにテンプレートのhtmlファイルを埋め込める
+	*/
+	tf, er := template.ParseFiles("templates/hello.html")
 	if er != nil {
-		log.Fatal(er)
+		// log.Fatal(er)
+		// templateを読み込めなかった際に表示するエラーページ
+		tf ,_ = template.New("index").Parse("<html><body><h1>NO TEMPLATE.</h1></body></html>")
 	}
 	hh := func(w http.ResponseWriter, rq *http.Request) {
 		// w.Write([]byte("Hello, This is Go-server!!"))
